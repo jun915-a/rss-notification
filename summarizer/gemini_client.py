@@ -12,7 +12,7 @@ async def summarize_with_gemini(text: str, max_chars: int = 200) -> str:
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
 
     payload = {
         "contents": [
