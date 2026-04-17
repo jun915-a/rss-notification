@@ -28,22 +28,19 @@ async def _run_with_single_retry(
 
 
 async def summarize_text(text: str, max_chars: int = 200) -> str:
-    fallback_text = (text or "要約対象テキストなし").strip()[:max_chars]
+    fallback = (text or "")[:max_chars]
 
-    try:
-        return await _run_with_single_retry("OpenAI", summarize_with_openai, text, max_chars)
-    except Exception as openai_error:  # noqa: BLE001
-        print(f"[WARN] OpenAI要約失敗: {openai_error}")
+    providers = [
+        ("OpenAI", summarize_with_openai, 5),
+        ("Gemini", summarize_with_gemini, 2),
+        ("Grok", summarize_with_grok, 1),
+    ]
 
-    try:
-        return await _run_with_single_retry("Gemini", summarize_with_gemini, text, max_chars)
-    except Exception as gemini_error:  # noqa: BLE001
-        print(f"[WARN] Gemini要約失敗: {gemini_error}")
+    for name, fn, wait in providers:
+        try:
+            await asyncio.sleep(wait)
+            return await fn(text, max_chars)
+        except Exception as e:
+            print(f"[WARN] {name}失敗: {e}")
 
-    try:
-        return await _run_with_single_retry("Grok", summarize_with_grok, text, max_chars)
-    except Exception as grok_error:  # noqa: BLE001
-        print(f"[WARN] Grok要約失敗: {grok_error}")
-
-    print("[WARN] 全要約API失敗: 生テキストを返却")
-    return fallback_text
+    return fallback
