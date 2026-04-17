@@ -13,7 +13,7 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
         raise RuntimeError("GROK_API_KEY is not set")
 
     payload = {
-        "model": "grok-beta",
+        "model": "grok-2-latest",
         "messages": [
             {"role": "system", "content": "You summarize text briefly."},
             {"role": "user", "content": text[:6000]},
