@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import os
-
 import httpx
 
 
@@ -13,31 +12,39 @@ async def summarize_with_gemini(text: str, max_chars: int = 200) -> str:
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set")
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=API_KEY"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+
     payload = {
         "contents": [
             {
                 "parts": [
-                    {"text": "要約して: " + text[:6000]},
+                    {"text": "要約して: " + text[:6000]}
                 ]
             }
         ]
     }
 
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+
+    await asyncio.sleep(1.0)
 
     async with httpx.AsyncClient(timeout=30) as client:
-        await asyncio.sleep(0.7)
-        response = await client.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        data = response.json()
+        r = await client.post(url, json=payload, headers=headers)
+        r.raise_for_status()
+        data = r.json()
 
     try:
-        content = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-    except Exception as exc:  # noqa: BLE001
-        raise RuntimeError(f"Gemini parse error: {exc}") from exc
+        content = (
+            data.get("candidates", [{}])[0]
+            .get("content", {})
+            .get("parts", [{}])[0]
+            .get("text", "")
+            .strip()
+        )
+    except Exception:
+        content = ""
 
     if not content:
-        raise RuntimeError("Gemini returned empty summary")
+        raise RuntimeError(f"Gemini empty response: {data}")
 
     return content[:max_chars]
