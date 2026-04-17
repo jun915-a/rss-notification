@@ -15,7 +15,7 @@ async def summarize_with_openai(text: str, max_chars: int = 200) -> str:
     prompt = f"次を{max_chars}文字以内で要約:\n\n{text[:6000]}"
 
     payload = {
-        "model": "gpt-4.1-mini",
+        "model": "gpt-4o-mini",
         "input": prompt,
     }
 
