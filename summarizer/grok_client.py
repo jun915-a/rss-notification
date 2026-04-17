@@ -12,19 +12,12 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
     if not api_key:
         raise RuntimeError("GROK_API_KEY is not set")
 
-    prompt = (
-        f"以下の記事を日本語で{max_chars}文字以内に要約してください。"
-        "初心者にも分かるように簡潔に書き、必要なら専門用語を短く補足してください。\n\n"
-        f"{text}"
-    )
-
     payload = {
         "model": "grok-1",
         "messages": [
-            {"role": "system", "content": "あなたは簡潔な日本語要約アシスタントです。"},
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": "You summarize text briefly."},
+            {"role": "user", "content": text[:6000]},
         ],
-        "temperature": 0.2,
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 

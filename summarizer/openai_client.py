@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 
 import httpx
@@ -23,7 +24,9 @@ async def summarize_with_openai(text: str, max_chars: int = 200) -> str:
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
-    # リトライは行わず1回のみ実行して429悪化を抑える
+    # 429緩和のため呼び出し前に待機
+    await asyncio.sleep(2)
+
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(
             "https://api.openai.com/v1/responses",
