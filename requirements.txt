@@ -1,0 +1,6 @@
+feedparser
+httpx
+PyYAML
+python-dotenv
+fastapi
+uvicorn

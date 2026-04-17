@@ -1,0 +1,26 @@
+rss_feeds:
+  - "https://zenn.dev/feed"
+  - "https://qiita.com/popular-items/feed"
+  - "https://android-developers.googleblog.com/feeds/posts/default"
+  - "https://9to5google.com/feed/"
+  - "https://www.androidauthority.com/feed/"
+  - "https://9to5mac.com/feed/"
+  - "https://developer.apple.com/news/rss/news.rss"
+  - "https://openai.com/blog/rss.xml"
+  - "https://www.marktechpost.com/feed/"
+  - "https://ai.googleblog.com/feeds/posts/default"
+  - "https://www.itmedia.co.jp/rss/2.0/news_bursts.xml"
+  - "https://gigazine.net/news/rss_2.0/"
+  - "https://www.nikkei.com/rss/"
+  - "https://www.bloomberg.co.jp/feed/"
+
+filter_keywords:
+  - "AI"
+  - "Android"
+  - "iOS"
+  - "アプリ開発"
+  - "モバイル開発"
+  - "スマホアプリ"
+  - "機械学習"
+
+max_summary_chars: 200
