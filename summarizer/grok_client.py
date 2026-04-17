@@ -3,15 +3,14 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 import httpx
 
 
-async def summarize_with_grok(text: str, max_chars: int = 200) -> Optional[str]:
+async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
     api_key = os.getenv("GROK_API_KEY")
     if not api_key:
-        return None
+        raise RuntimeError("GROK_API_KEY is not set")
 
     prompt = (
         f"以下の記事を日本語で{max_chars}文字以内に要約してください。"
@@ -20,19 +19,26 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> Optional[str]:
     )
 
     payload = {
-        "model": "grok-beta",
-        "messages": [{"role": "user", "content": prompt}],
+        "model": "grok-1",
+        "messages": [
+            {"role": "system", "content": "あなたは簡潔な日本語要約アシスタントです。"},
+            {"role": "user", "content": prompt},
+        ],
         "temperature": 0.2,
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post("https://api.x.ai/v1/chat/completions", json=payload, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.post("https://api.x.ai/v1/chat/completions", json=payload, headers=headers)
-            response.raise_for_status()
-            data = response.json()
-            content = data["choices"][0]["message"]["content"].strip()
-            return content[:max_chars]
+        content = data["choices"][0]["message"]["content"].strip()
     except Exception as exc:  # noqa: BLE001
-        print(f"[WARN] Grok要約失敗: {exc}")
-        return None
+        raise RuntimeError(f"Grok parse error: {exc}") from exc
+
+    if not content:
+        raise RuntimeError("Grok returned empty summary")
+
+    return content[:max_chars]

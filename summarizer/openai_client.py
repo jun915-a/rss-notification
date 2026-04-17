@@ -3,50 +3,43 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 import httpx
 
 
-async def summarize_with_openai(text: str, max_chars: int = 200) -> Optional[str]:
+async def summarize_with_openai(text: str, max_chars: int = 200) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        return None
+        raise RuntimeError("OPENAI_API_KEY is not set")
 
+    prompt = (
+        f"以下の記事を日本語で{max_chars}文字以内に要約してください。"
+        "初心者にも分かる、短く簡潔な文章にしてください。\n\n"
+        f"{text[:6000]}"
+    )
     payload = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {
-                "role": "system",
-                "content": (
-                    "あなたは要約アシスタントです。"
-                    "日本語で簡潔に、初心者にも分かる要約を返してください。"
-                ),
-            },
-            {
-                "role": "user",
-                "content": (
-                    f"次の記事を日本語で{max_chars}文字以内に要約してください。"
-                    "必要なら専門用語を短く補足してください。\n\n"
-                    f"{text}"
-                ),
-            },
-        ],
-        "temperature": 0.2,
+        "model": "gpt-4.1-mini",
+        "input": prompt,
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.post(
-                "https://api.openai.com/v1/chat/completions",
-                json=payload,
-                headers=headers,
-            )
-            response.raise_for_status()
-            data = response.json()
-            content = data["choices"][0]["message"]["content"].strip()
-            return content[:max_chars]
-    except Exception as exc:  # noqa: BLE001
-        print(f"[WARN] OpenAI要約失敗: {exc}")
-        return None
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(
+            "https://api.openai.com/v1/responses",
+            json=payload,
+            headers=headers,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+    content = (data.get("output_text") or "").strip()
+    if not content:
+        try:
+            content = data["output"][0]["content"][0]["text"].strip()
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(f"OpenAI parse error: {exc}") from exc
+
+    if not content:
+        raise RuntimeError("OpenAI returned empty summary")
+
+    return content[:max_chars]
