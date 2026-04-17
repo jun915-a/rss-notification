@@ -12,10 +12,7 @@ async def summarize_with_gemini(text: str, max_chars: int = 200) -> str:
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set")
 
-    url = (
-        "https://generativelanguage.googleapis.com/v1/models/"
-        f"gemini-1.5-flash:generateContent?key={api_key}"
-    )
+    url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent"
     payload = {
         "contents": [
             {
@@ -26,8 +23,10 @@ async def summarize_with_gemini(text: str, max_chars: int = 200) -> str:
         ]
     }
 
+    headers = {"Content-Type": "application/json", "x-goog-api-key": api_key}
+
     async with httpx.AsyncClient(timeout=30) as client:
-        response = await client.post(url, json=payload)
+        response = await client.post(url, json=payload, headers=headers)
         response.raise_for_status()
         data = response.json()
 

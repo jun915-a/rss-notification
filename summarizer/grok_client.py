@@ -18,6 +18,8 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
             {"role": "system", "content": "You summarize text briefly."},
             {"role": "user", "content": text[:6000]},
         ],
+        "temperature": 0.2,
+        "max_tokens": 300,
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 

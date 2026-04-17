@@ -8,6 +8,8 @@ from summarizer.openai_client import summarize_with_openai
 
 
 async def summarize_text(text: str, max_chars: int = 200) -> str:
+    fallback_text = (text or "要約対象テキストなし").strip()[:max_chars]
+
     try:
         return await summarize_with_openai(text, max_chars=max_chars)
     except Exception as openai_error:  # noqa: BLE001
@@ -24,4 +26,4 @@ async def summarize_text(text: str, max_chars: int = 200) -> str:
         print(f"[WARN] Grok要約失敗: {grok_error}")
 
     print("[WARN] 全要約API失敗: 生テキストを返却")
-    return text[:max_chars]
+    return fallback_text
