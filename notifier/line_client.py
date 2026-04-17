@@ -27,6 +27,8 @@ async def send_line_message(title: str, summary: str, url: str) -> bool:
 
     for attempt in range(3):
         try:
+            # APIレート制限対策: 送信前に必ず2秒待機
+            await asyncio.sleep(2)
             async with httpx.AsyncClient(timeout=20) as client:
                 response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
                 response.raise_for_status()
