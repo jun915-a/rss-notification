@@ -25,22 +25,13 @@ async def send_line_message(title: str, summary: str, url: str) -> bool:
         "messages": [{"type": "text", "text": message[:4900]}],
     }
 
-    for attempt in range(3):
-        try:
-            # APIレート制限対策: 送信前に必ず2秒待機
-            await asyncio.sleep(2)
-            async with httpx.AsyncClient(timeout=20) as client:
-                response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
-                response.raise_for_status()
-            print("[INFO] LINE送信成功")
-            return True
-        except httpx.HTTPStatusError as exc:
-            status = exc.response.status_code
-            print(f"[WARN] LINE送信失敗(status={status}) attempt {attempt + 1}/3")
-            if status == 429 and attempt < 2:
-                await asyncio.sleep(5 * (attempt + 1))
-                continue
-            return False
-        except Exception as exc:  # noqa: BLE001
-            print(f"[ERROR] LINE送信失敗: {exc}")
-            return False
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
+            response.raise_for_status()
+        await asyncio.sleep(5)
+        print("[INFO] LINE送信成功")
+        return True
+    except Exception as exc:  # noqa: BLE001
+        print(f"[ERROR] LINE送信失敗: {exc}")
+        return False

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict, List
 
 NOISE_KEYWORDS = ["pr", "広告", "sponsored", "アフィリエイト"]
-MAX_ARTICLES_PER_RUN = 2
+MAX_ARTICLES_PER_RUN = 1
 
 
 def _build_search_text(article: Dict[str, str]) -> str:
