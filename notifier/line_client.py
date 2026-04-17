@@ -26,10 +26,11 @@ async def send_line_message(title: str, summary: str, url: str) -> bool:
     }
 
     try:
+        # レート制限回避のため最初の送信前に待機
+        await asyncio.sleep(10)
         async with httpx.AsyncClient(timeout=20) as client:
             response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
             response.raise_for_status()
-        await asyncio.sleep(5)
         print("[INFO] LINE送信成功")
         return True
     except Exception as exc:  # noqa: BLE001
