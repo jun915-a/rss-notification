@@ -4,22 +4,32 @@ from __future__ import annotations
 
 from typing import Dict, List
 
+NOISE_KEYWORDS = ["pr", "広告", "sponsored", "アフィリエイト"]
+MAX_ARTICLES_PER_RUN = 5
 
-def _contains_any_keyword(text: str, keywords: List[str]) -> bool:
-    lower_text = (text or "").lower()
-    return any(keyword.lower() in lower_text for keyword in keywords)
+
+def _build_search_text(article: Dict[str, str]) -> str:
+    return f"{article.get('title', '')} {article.get('content', '')}".lower()
 
 
 def matches_keywords(article: Dict[str, str], keywords: List[str]) -> bool:
-    title = article.get("title", "")
-    content = article.get("content", "")
-    return _contains_any_keyword(title, keywords) or _contains_any_keyword(content, keywords)
+    text = _build_search_text(article)
+    return any(keyword.lower() in text for keyword in keywords)
 
 
 def filter_articles_by_keywords(articles: List[Dict[str, str]], keywords: List[str]) -> List[Dict[str, str]]:
-    filtered = [article for article in articles if matches_keywords(article, keywords)]
-    print(f"[INFO] キーワードフィルタ: {len(filtered)}件 / {len(articles)}件")
-    return filtered
+    filtered: List[Dict[str, str]] = []
+
+    for article in articles:
+        text = _build_search_text(article)
+
+        if any(keyword.lower() in text for keyword in keywords):
+            if not any(noise in text for noise in NOISE_KEYWORDS):
+                filtered.append(article)
+
+    limited = filtered[:MAX_ARTICLES_PER_RUN]
+    print(f"[INFO] キーワードフィルタ: {len(limited)}件 / {len(articles)}件 (上限{MAX_ARTICLES_PER_RUN}件)")
+    return limited
 
 
 def filter_articles_by_query(articles: List[Dict[str, str]], query: str) -> List[Dict[str, str]]:

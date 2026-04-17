@@ -15,12 +15,15 @@ rss_feeds:
   - "https://www.bloomberg.co.jp/feed/"
 
 filter_keywords:
-  - "AI"
+  - "AI 活用"
+  - "AI 導入"
+  - "AI 事例"
+  - "ChatGPT 活用"
+  - "生成AI 活用"
   - "Android"
-  - "iOS"
-  - "アプリ開発"
-  - "モバイル開発"
-  - "スマホアプリ"
-  - "機械学習"
+  - "Android 14"
+  - "Android 15"
+  - "Google Pixel"
+  - "Android アップデート"
 
 max_summary_chars: 200
