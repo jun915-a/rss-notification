@@ -25,7 +25,7 @@ async def summarize_with_openai(text: str, max_chars: int = 200) -> str:
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     # 429緩和のため呼び出し前に待機
-    await asyncio.sleep(2)
+    await asyncio.sleep(5)
 
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(
