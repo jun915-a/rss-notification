@@ -23,6 +23,7 @@ async def summarize_with_openai(text: str, max_chars: int = 200) -> str:
     }
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
+    # リトライは行わず1回のみ実行して429悪化を抑える
     async with httpx.AsyncClient(timeout=30) as client:
         response = await client.post(
             "https://api.openai.com/v1/responses",

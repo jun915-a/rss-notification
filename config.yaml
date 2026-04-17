@@ -26,4 +26,4 @@ filter_keywords:
   - "Google Pixel"
   - "Android アップデート"
 
-max_summary_chars: 200
+max_summary_chars: 120
