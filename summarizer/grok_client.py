@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 
 import httpx
@@ -24,6 +25,7 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     async with httpx.AsyncClient(timeout=30) as client:
+        await asyncio.sleep(0.7)
         response = await client.post("https://api.x.ai/v1/chat/completions", json=payload, headers=headers)
         response.raise_for_status()
         data = response.json()

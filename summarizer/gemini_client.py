@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 
 import httpx
@@ -26,6 +27,7 @@ async def summarize_with_gemini(text: str, max_chars: int = 200) -> str:
     headers = {"Content-Type": "application/json", "x-goog-api-key": api_key}
 
     async with httpx.AsyncClient(timeout=30) as client:
+        await asyncio.sleep(0.7)
         response = await client.post(url, json=payload, headers=headers)
         response.raise_for_status()
         data = response.json()

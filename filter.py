@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Dict, List
 
-MAX_ARTICLES_PER_RUN = 1
+MAX_ARTICLES_PER_RUN = 2
 
 
 def _build_search_fields(article: Dict[str, str]) -> tuple[str, str, str]:
@@ -28,6 +28,9 @@ def matches_keywords(article: Dict[str, str], keywords: List[str]) -> bool:
         if lowered in combined:
             return True
         if any(token in title or token in description for token in token_matches):
+            return True
+        # キーワードが長い場合は、部分一致の取りこぼしを減らす
+        if len(lowered) >= 4 and (lowered[:4] in title or lowered[:4] in description):
             return True
 
     return False
