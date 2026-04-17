@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import os
-
 import httpx
 
 
@@ -21,26 +20,34 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
         ],
         "temperature": 0.2,
     }
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
-    # デバッグ用: 送信payloadを明示（機密情報は含めない）
-    print(f"[DEBUG] Grok request payload: {payload}")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+
+    await asyncio.sleep(1.0)
 
     async with httpx.AsyncClient(timeout=30) as client:
-        await asyncio.sleep(0.7)
-        response = await client.post("https://api.x.ai/v1/chat/completions", json=payload, headers=headers)
-        if response.status_code >= 400:
-            # 400系調査しやすいようレスポンス本文を残す
-            raise RuntimeError(f"Grok HTTP {response.status_code}: {response.text}")
-        response.raise_for_status()
-        data = response.json()
+        r = await client.post(
+            "https://api.x.ai/v1/chat/completions",
+            json=payload,
+            headers=headers,
+        )
 
-    try:
-        content = data["choices"][0]["message"]["content"].strip()
-    except Exception as exc:  # noqa: BLE001
-        raise RuntimeError(f"Grok parse error: {exc}") from exc
+        if r.status_code >= 400:
+            raise RuntimeError(f"Grok error {r.status_code}: {r.text}")
+
+        data = r.json()
+
+    content = (
+        data.get("choices", [{}])[0]
+        .get("message", {})
+        .get("content", "")
+        .strip()
+    )
 
     if not content:
-        raise RuntimeError("Grok returned empty summary")
+        raise RuntimeError("Grok empty response")
 
     return content[:max_chars]
