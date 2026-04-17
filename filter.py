@@ -5,7 +5,14 @@ from __future__ import annotations
 import re
 from typing import Dict, List
 
-MAX_ARTICLES_PER_RUN = 2
+TARGET_KEYWORDS = [
+    "AI",
+    "人工知能",
+    "machine learning",
+    "Android",
+    "Google Pixel",
+]
+MAX_ARTICLES_PER_RUN = 20
 
 
 def _build_search_fields(article: Dict[str, str]) -> tuple[str, str, str]:
@@ -37,7 +44,9 @@ def matches_keywords(article: Dict[str, str], keywords: List[str]) -> bool:
 
 
 def filter_articles_by_keywords(articles: List[Dict[str, str]], keywords: List[str]) -> List[Dict[str, str]]:
-    filtered = [article for article in articles if matches_keywords(article, keywords)]
+    # 設定値よりも安定運用向け固定キーワードを優先
+    effective_keywords = TARGET_KEYWORDS if TARGET_KEYWORDS else keywords
+    filtered = [article for article in articles if matches_keywords(article, effective_keywords)]
     limited = filtered[:MAX_ARTICLES_PER_RUN]
     print(f"[INFO] キーワードフィルタ: {len(limited)}件 / {len(articles)}件 (上限{MAX_ARTICLES_PER_RUN}件)")
     return limited

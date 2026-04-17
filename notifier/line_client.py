@@ -25,20 +25,25 @@ async def send_line_message(title: str, summary: str, url: str) -> bool:
         "messages": [{"type": "text", "text": message[:4900]}],
     }
 
-    try:
-        # レート制限回避のため送信間隔を確保
-        await asyncio.sleep(1)
-        async with httpx.AsyncClient(timeout=20) as client:
-            response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
-            response.raise_for_status()
-        print("[INFO] LINE送信成功")
-        return True
-    except httpx.HTTPStatusError as exc:
-        if exc.response.status_code == 429:
-            print("[WARN] LINE 429検知: 今回はスキップ")
-            return False
-        print(f"[ERROR] LINE送信失敗(status={exc.response.status_code}): {exc}")
-        return False
-    except Exception as exc:  # noqa: BLE001
-        print(f"[ERROR] LINE送信失敗: {exc}")
-        return False
+    for attempt in range(3):
+        try:
+            # レート制限回避のため送信間隔を確保
+            await asyncio.sleep(1)
+            async with httpx.AsyncClient(timeout=20) as client:
+                response = await client.post("https://api.line.me/v2/bot/message/push", json=payload, headers=headers)
+                response.raise_for_status()
+            print("[INFO] LINE送信成功")
+            return True
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 429:
+                print("[WARN] LINE 429検知: 今回はスキップ")
+                return False
+            print(f"[WARN] LINE送信失敗(status={exc.response.status_code}) attempt {attempt + 1}/3")
+            if attempt == 2:
+                return False
+        except Exception as exc:  # noqa: BLE001
+            print(f"[WARN] LINE送信失敗 attempt {attempt + 1}/3: {exc}")
+            if attempt == 2:
+                return False
+
+    return False

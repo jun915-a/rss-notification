@@ -82,8 +82,8 @@ async def main() -> None:
     articles = await fetch_all_articles(feed_urls)
     filtered_articles = filter_articles_by_keywords(articles, keywords)
 
-    # 🔽 追加：処理件数制限（超重要）
-    MAX_ARTICLES_PER_RUN = 5
+    # 🔽 追加：処理件数制限（安定運用）
+    MAX_ARTICLES_PER_RUN = 20
     filtered_articles = filtered_articles[:MAX_ARTICLES_PER_RUN]
 
     await _process_regular_articles(filtered_articles, processed_ids, max_summary_chars)

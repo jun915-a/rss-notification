@@ -14,8 +14,8 @@ async def summarize_with_grok(text: str, max_chars: int = 200) -> str:
         raise RuntimeError("GROK_API_KEY is not set")
 
     payload = {
-        # xAI側で広く利用されるchat completionsモデル名
-        "model": "grok-beta",
+        # grok-1系モデルを利用
+        "model": "grok-1",
         "messages": [
             {"role": "system", "content": "You summarize text briefly."},
             {"role": "user", "content": text[:6000]},
