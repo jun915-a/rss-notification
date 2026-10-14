@@ -157,6 +157,7 @@
   "https://zenn.dev/hidechannu/books/oauth21-mcp-guide",
   "https://zenn.dev/hidenori3/articles/071eb67ed8d06b",
   "https://zenn.dev/hisaju01/books/meteorfall-development",
+  "https://zenn.dev/hk_work/articles/mobile-scanner-isbn-barcode",
   "https://zenn.dev/horicchy/articles/7076932bff319b",
   "https://zenn.dev/hoshinagi1219/articles/6c2446701595cc",
   "https://zenn.dev/hosoyayusaku/articles/25ec9a4a6fa1c9",
@@ -453,6 +454,7 @@
   "https://zenn.dev/yatmita/articles/nemu-kaigi-llm-content-voting",
   "https://zenn.dev/yesodco/articles/ed0eb2f6b7621a",
   "https://zenn.dev/ymotongpoo/articles/20261001-agent-eval-loop",
+  "https://zenn.dev/ymotongpoo/articles/20261014-bedrock-sagemaker-otel",
   "https://zenn.dev/ymotongpoo/books/chainguard-image-toolchain",
   "https://zenn.dev/yohei_data/articles/2ad3e6c95cd879",
   "https://zenn.dev/yokomachi/articles/202605_agentcore-optimization-recommendations",
@@ -1172,6 +1174,7 @@
   "tag:qiita.com,2005:PublicArticle/2283485",
   "tag:qiita.com,2005:PublicArticle/2283486",
   "tag:qiita.com,2005:PublicArticle/2283602",
+  "tag:qiita.com,2005:PublicArticle/2283646",
   "tag:qiita.com,2005:PublicArticle/2283678",
   "tag:qiita.com,2005:PublicArticle/2283710",
   "tag:qiita.com,2005:PublicArticle/2283721",
@@ -1203,5 +1206,7 @@
   "tag:qiita.com,2005:PublicArticle/2285822",
   "tag:qiita.com,2005:PublicArticle/2285903",
   "tag:qiita.com,2005:PublicArticle/2285946",
-  "tag:qiita.com,2005:PublicArticle/2286003"
+  "tag:qiita.com,2005:PublicArticle/2286003",
+  "tag:qiita.com,2005:PublicArticle/2286330",
+  "tag:qiita.com,2005:PublicArticle/2286426"
 ]
